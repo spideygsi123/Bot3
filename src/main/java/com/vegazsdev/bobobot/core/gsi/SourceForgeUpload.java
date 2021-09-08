@@ -33,7 +33,40 @@ public class SourceForgeUpload {
         }
 
         name = name + " - " + RandomStringUtils.randomAlphanumeric(10).toUpperCase();
-        String path = "/home/frs/project/" + proj + "/" + name;
+        String path = "/home/frs/project/" + proj + "/GSI/" + name;
+
+        try {
+            JSch jsch = new JSch();
+
+            Session session = jsch.getSession(user, host);
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.setPassword(pass);
+            session.connect();
+
+            ChannelSftp sftpChannel = (ChannelSftp) session.openChannel("sftp");
+
+            sftpChannel.connect();
+            sftpChannel.mkdir(path);
+
+            for (String s : arrayList) {
+                if (!s.endsWith(".img")) {
+                    sftpChannel.put(s, path);
+                }
+            }
+            return name;
+        } catch (Exception exception) {
+            logger.error(exception.getMessage());
+        }
+        return null;
+    }
+public String uploadSgsi(ArrayList<String> arrayList, String name) {
+
+        if (name.contains(":")) {
+            name = name.replace(":", " - ");
+        }
+
+        name = name + " - " + RandomStringUtils.randomAlphanumeric(10).toUpperCase();
+        String path = "/home/frs/project/" + proj + "/SGSI/" + name;
 
         try {
             JSch jsch = new JSch();
