@@ -8,6 +8,9 @@ import com.vegazsdev.bobobot.db.PrefObj;
 import com.vegazsdev.bobobot.utils.Config;
 import com.vegazsdev.bobobot.utils.FileTools;
 import com.vegazsdev.bobobot.utils.JSONs;
+import okio.BufferedSource;
+import okio.Okio;
+import okio.Source;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -41,7 +44,7 @@ import java.util.stream.Stream;
  *     <li>{@link #isGSIValid(String)}</li>
  *     <li>{@link #createGSI(GSICmdObj, TelegramBot)}</li>
  *     <li>{@link #userHasPortPermissions(String)}</li>
- *     <li>{@link #getModelOfOutput()}</li>
+ *     <li>{@link #getModelOfOutput(String)}</li>
  *     <li>{@link #addPortPerm(String)}</li>
  *
  * </ul>
@@ -59,7 +62,7 @@ public class ErfanGSIs extends Command {
      */
     private static final ArrayList<GSICmdObj> queue = new ArrayList<>();
     private static boolean isPorting = false;
-    private final String toolPath = "ErfanGSIs/";
+    private final String toolPath = "XiaoxindadaSGSIs/";
 
     /**
      * Get supported versions from ErfanGSIs tool.
@@ -75,6 +78,7 @@ public class ErfanGSIs extends Command {
     private String messageError = "";
     private String infoGSI = "";
     private String noticeGSI = "";
+    private String developerNoticeGSI = "";
 
     public ErfanGSIs() {
         super("jurl2gsi");
@@ -144,7 +148,7 @@ public class ErfanGSIs extends Command {
                 default -> {
                     messageError = prefs.getString("egsi_fail_to_build_gsi");
                     if (userHasPortPermissions(update.getMessage().getFrom().getId().toString())) {
-                        if (!FileTools.checkIfFolderExists("ErfanGSIs")) {
+                        if (!FileTools.checkIfFolderExists("XiaoxindadaSGSIs")) {
                             bot.sendReply(prefs.getString("egsi_dont_exists_tool_folder"), update);
                         } else {
                             GSICmdObj gsiCommand = isCommandValid(update);
@@ -196,8 +200,9 @@ public class ErfanGSIs extends Command {
      */
     private GSICmdObj isCommandValid(Update update) {
         GSICmdObj gsiCmdObj = new GSICmdObj();
-        String[] msgComparableRaw = update.getMessage().getText().split(" ");
         String msg = update.getMessage().getText().replace(Config.getDefConfig("bot-hotkey") + this.getAlias() + " ", "");
+        String[] msgComparableRaw = update.getMessage().getText().split(" "), paramComparableRaw;
+        boolean canContinueLoop = false;
         String url, gsi, param;
 
         if (msgComparableRaw.length >= 3) {
@@ -206,12 +211,27 @@ public class ErfanGSIs extends Command {
                 gsiCmdObj.setUrl(url);
                 gsi = msg.split(" ")[2];
                 gsiCmdObj.setGsi(gsi);
-                param = msg.replace(url + " ", "").replace(gsi, "").trim();
+                param = msg.replace(msgComparableRaw[0], "").replace(msgComparableRaw[1], "").replace(msgComparableRaw[2], "").trim();
                 param = try2AvoidCodeInjection(param);
+                paramComparableRaw = param.split(" ");
 
-                if (param.contains("-nv")) {
-                    noticeGSI = "<b>Notice</b>\nThis GSI requires the vendor to have the same version of the system, check <a href=\"https://t.me/TrebleExperience_chat/10308\">this</a>\n\n";
+                if (param.contains("-nv")) noticeGSI = "<b>GSI Notice</b>\nThis GSI requires the vendor to have the same version of the system!\n\n";
+
+                StringBuilder stringBuilder = new StringBuilder();
+                for (String string : paramComparableRaw) {
+                    if (string.startsWith("-")) canContinueLoop = true;
+                    if (!string.startsWith("-")) break;
+                    if (canContinueLoop) stringBuilder.append(string).append(" ");
                 }
+
+                developerNoticeGSI = param.replace(String.valueOf(stringBuilder), "");
+                if (developerNoticeGSI.contains(param)) developerNoticeGSI = "";
+                if (!developerNoticeGSI.equals("")) developerNoticeGSI =
+                        "<b>Developer Note</b>\n"
+                        + param.replace(String.valueOf(stringBuilder), "")
+                        + "\n\n";
+
+                param = String.valueOf(stringBuilder);
 
                 gsiCmdObj.setParam(param);
                 gsiCmdObj.setUpdate(update);
@@ -275,82 +295,121 @@ public class ErfanGSIs extends Command {
     /**
      * Get model/codename of the device.
      */
-    private String getModelOfOutput() {
-        StringBuilder fullLogs = new StringBuilder();
+    public String getModelOfOutput(String folder) {
+        /*
+         * Initialize core variables
+         */
+        File outputFolder = new File(folder);
+        File file = null;
+        String modelName = null;
+        String buildType = null;
+        String brand = null;
 
-        InputStream inputStream = null;
-        InputStreamReader inputStreamReader = null;
-        BufferedReader bufferedReader = null;
+        /*
+         * List the files
+         */
+        for (final File fileEntry : Objects.requireNonNull(outputFolder.listFiles())) {
+            if (fileEntry.getName().endsWith(".txt") && !fileEntry.getName().contains("System-Tree")) {
+                file = new File(String.valueOf(fileEntry));
+            }
+        }
 
-        try {
-            ProcessBuilder processBuilder;
-            processBuilder = new ProcessBuilder("/bin/bash", "-c",
-                    "grep -oP \"(?<=^Model: ).*\" -hs \"$(pwd)\"/ErfanGSIs/output/*txt | head -1"
-            );
-            processBuilder.redirectErrorStream(true);
-            Process process = processBuilder.start();
-
-            inputStream = process.getInputStream();
-            inputStreamReader = new InputStreamReader(inputStream);
-            bufferedReader = new BufferedReader(inputStreamReader);
-
-            String line;
+        /*
+         * Try to get codename
+         */
+        try (Source fileSource = Okio.source(Objects.requireNonNull(file));
+             BufferedSource bufferedSource = Okio.buffer(fileSource)) {
 
             /*
              * Get codename
              */
-            while ((line = bufferedReader.readLine()) != null) {
-                if (line.length() < 1)
-                    line = "Generic";
-                else if (line.toLowerCase().contains("x00qd"))
-                    line = "Asus Zenfone 5";
-                else if (line.toLowerCase().contains("qssi"))
-                    line = "Qualcomm Single System Image";
-                else if (line.toLowerCase().contains("miatoll"))
-                    line = "MiAtoll";
-                else if (line.toLowerCase().contains("surya"))
-                    line = "Poco X3";
-                else if (line.toLowerCase().contains("lavender"))
-                    line = "Redmi Note 7";
-                else if (line.toLowerCase().contains("ginkgo"))
-                    line = "Redmi Note 8";
-                else if (line.toLowerCase().contains("raphael"))
-                    line = "Mi 9T Pro";
-                else if (line.toLowerCase().contains("mainline"))
-                    line = "AOSP/Pixel (Mainline) Device";
-                else if (line.toLowerCase().contains("sm6250"))
-                    line = "Atoll device";
-                else if (line.toLowerCase().contains("msi"))
-                    line = "Motorola System Image";
-                else if (line.toLowerCase().contains("mssi"))
-                    line = "MIUI Single System Image";
-                else if (line.toLowerCase().contains("a30"))
-                    line = "Samsung Galaxy A30";
-                else if (line.toLowerCase().contains("a20"))
-                    line = "Samsung Galaxy A20";
-                else if (line.toLowerCase().contains("a10"))
-                    line = "Samsung Galaxy A10";
-                else if (line.equals(" "))
-                    line = "Generic";
+            while (true) {
+                String line = bufferedSource.readUtf8Line();
+                if (line == null) break;
+                if (line.startsWith("Brand")) brand = line.substring(7);
+                if (line.startsWith("Model")) modelName = line.substring(7);
+                if (line.startsWith("Build Type")) buildType = line.substring(12);
+            }
 
-                fullLogs.append(line);
+            /*
+             * Check if the model have special codename
+             */
+            if (Objects.requireNonNull(modelName).length() < 1)
+                modelName = "Generic";
+            else if (modelName.toLowerCase().contains("x00qd"))
+                modelName = "Asus Zenfone 5";
+            else if (modelName.toLowerCase().contains("qssi"))
+                modelName = "Qualcomm Single System Image";
+            else if (modelName.toLowerCase().contains("miatoll"))
+                modelName = "Redmi Note 9S/Redmi Note 9 Pro/Redmi Note 9 Pro Max/POCO M2 Pro";
+            else if (modelName.toLowerCase().contains("surya"))
+                modelName = "Poco X3";
+            else if (modelName.toLowerCase().contains("lavender"))
+                modelName = "Redmi Note 7";
+            else if (modelName.toLowerCase().contains("ginkgo"))
+                modelName = "Redmi Note 8";
+            else if (modelName.toLowerCase().contains("raphael"))
+                modelName = "Mi 9T Pro";
+            else if (modelName.toLowerCase().contains("mainline"))
+                modelName = "AOSP/Pixel (Mainline) Device";
+            else if (modelName.toLowerCase().contains("sm6250"))
+                modelName = "Atoll device";
+            else if (modelName.toLowerCase().contains("msi"))
+                modelName = "Motorola System Image";
+            else if (modelName.toLowerCase().contains("mssi"))
+                modelName = "MIUI Single System Image";
+            else if (modelName.equals("a30"))
+                modelName = "Samsung Galaxy A30";
+            else if (modelName.equals("a20"))
+                modelName = "Samsung Galaxy A20";
+            else if (modelName.equals("a10"))
+                modelName = "Samsung Galaxy A10";
+            else if (modelName.equals("LE2123"))
+                modelName = "OnePlus 9 Pro";
+            else if (modelName.toLowerCase().contains("apollo"))
+                modelName = "Mi 10T/Mi 10T Pro/Redmi K30S";
+            else if (modelName.toLowerCase().contains("gauguin"))
+                modelName = "Mi 10T Lite/Mi 10i 5G/Redmi Note 9 5G";
+            else if (modelName.equals(" "))
+                modelName = "Generic";
+
+            if (Objects.requireNonNull(brand).equals("google")) {
+                if (modelName.equals("AOSP/Pixel (Mainline) Device")) {
+                    switch (Objects.requireNonNull(buildType)) {
+                        // only Pixel which have QP, RP & SP (Q, R & S)
+                        case "barbet-user" -> modelName = "Google Pixel 5a";
+                        case "redfin-user" -> modelName = "Google Pixel 5";
+                        case "bramble-user" -> modelName = "Google Pixel 4a 5G";
+                        case "sunfish-user" -> modelName = "Google Pixel 4a";
+                        case "coral-user" -> modelName = "Google Pixel 4 XL";
+                        case "flame-user" -> modelName = "Google Pixel 4";
+                        case "bonito-user" -> modelName = "Google Pixel 3a XL";
+                        case "sargo-user" -> modelName = "Google Pixel 3a";
+                        case "crosshatch-user" -> modelName = "Google Pixel 3 XL";
+                        case "blueline-user" -> modelName = "Google Pixel 3";
+                        case "taimen-user" -> modelName = "Google Pixel 2 XL";
+                        case "walleye-user" -> modelName = "Google Pixel 2";
+                        case "marlin-user" -> modelName = "Google Pixel XL";
+                        case "sailfish-user" -> modelName = "Google Pixel";
+                    }
+                }
             }
 
             /*
              * First check
              */
-            String stringToBeCheked = fullLogs.toString().toLowerCase();
+            String stringToCheck = modelName.toLowerCase();
             boolean testPass = false;
 
             char[] characterSearch = {
                     'q', 'w', 'e', 'r', 't', 'y', 'u',
                     'i', 'o', 'p', 'a', 's', 'd', 'f',
                     'g', 'h', 'j', 'k', 'l', 'z', 'x',
-                    'c', 'v', 'b', 'n', 'm',
+                    'c', 'v', 'b', 'n', 'm'
             };
 
-            for (int i = 0; i < stringToBeCheked.length(); i++) {
-                char character = stringToBeCheked.charAt(i);
+            for (int i = 0; i < stringToCheck.length(); i++) {
+                char character = stringToCheck.charAt(i);
                 for (char search : characterSearch) {
                     if (search == character) {
                         testPass = true;
@@ -359,39 +418,11 @@ public class ErfanGSIs extends Command {
                 }
             }
 
-            /*
-             * Second check
-             */
             if (!testPass) return "Generic";
-            return String.valueOf(fullLogs);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException ioException) {
-                    logger.error(ioException.getMessage(), ioException);
-                }
-            }
-
-            if (inputStreamReader != null) {
-                try {
-                    inputStreamReader.close();
-                } catch (IOException ioException) {
-                    logger.error(ioException.getMessage(), ioException);
-                }
-            }
-
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ioException) {
-                    logger.error(ioException.getMessage(), ioException);
-                }
-            }
+            return modelName;
+        } catch (IOException e) {
+            return "Generic";
         }
-        return "Generic";
     }
 
     /**
@@ -470,7 +501,7 @@ public class ErfanGSIs extends Command {
                 if (weDontNeedAria2Logs) {
                     fullLogs.append("\n").append(line);
                     bot.editMessage(fullLogs.toString(), update, id);
-                    if (line.contains("GSI done on:")) {
+                    if (line.contains("GSI done")) {
                         success = true;
                     }
                 }
@@ -480,7 +511,7 @@ public class ErfanGSIs extends Command {
              * If the GSI got true boolean, it will create gzip, upload, prepare message and send it to channel/group
              */
             if (success) {
-                fullLogs.append("\n").append("<code>Creating gzip...</code>");
+                fullLogs.append("\n").append("<code>-> Creating gzip...</code>");
                 bot.editMessage(fullLogs.toString(), update, id);
 
                 /*
@@ -538,7 +569,7 @@ public class ErfanGSIs extends Command {
                 /*
                  * Now say the bot will upload files to SourceForge
                  */
-                fullLogs.append("\n").append("<code>Sending files to SF...</code>");
+                fullLogs.append("\n").append("<code>-> Uploading to SF...</code>");
                 bot.editMessage(fullLogs.toString(), update, id);
 
                 /*
@@ -574,7 +605,7 @@ public class ErfanGSIs extends Command {
                     List<InlineKeyboardButton> rowInline2 = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("Aonly Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/" + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/" + re + aonly);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + aonly);
                     rowInline2.add(inlineKeyboardButton);
                     rowsInline.add(rowInline2);
                 }
@@ -583,7 +614,7 @@ public class ErfanGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("A/B Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/" + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/" + re + ab);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + ab);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -592,7 +623,7 @@ public class ErfanGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("Vendor Overlays Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/" + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/" + re + vendorOverlays);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + vendorOverlays);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -601,7 +632,7 @@ public class ErfanGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("ODM Overlays Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/" + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/" + re + odmOverlays);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + odmOverlays);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -625,22 +656,23 @@ public class ErfanGSIs extends Command {
                 /*
                  * Send GSI message
                  */
-                sendMessage.setText("<b>Requested " + gsiCmdObj.getGsi() + " GSI</b>"
-                        + "\n<b>From</b> " + getModelOfOutput()
-                        + "\n<b>Built by</b> <a href=\"" + "tg://user?id=" + builderID + "\">" + builder + "</a>"
+                sendMessage.setText("<b>" + gsiCmdObj.getGsi() + " GSI</b>"
+                        + "\n<b>From</b> " + getModelOfOutput(toolPath + "output")
                         + "\n\n<b>Information</b>\n<code>" + descGSI
                         + "</code>\n\n"
                         + noticeGSI
-                        + "<b>Credits</b>" + "\n"
+                        + developerNoticeGSI
+                        + "<b>✵ RK137 GSI ✵</b>" + "\n"
+                        + "<a href=\"https://t.me/rk137gsi\">GSI Channel</a> |  "<a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/GSI\">SF Folder</a>"
+                        + "\n\n<b>Credits :</b>" + "\n"
                         + "<a href=\"https://github.com/Erfanoabdi\">Erfan Abdi</a>" + " | "
-                        + "<a href=\"https://github.com/TrebleExperience/Bot3\">Bo³+t</a>" + "\n\n"
-                        + "<b>Treble Experience</b>" + "\n"
-                        + "<a href=\"https://t.me/TrebleExperience\">Channel</a> | <a href=\"https://t.me/TrebleExperience_chat\">Chat</a> | <a href=\"https://github.com/TrebleExperience\">GitHub</a>"
+                        + "<a href=\"https://github.com/TrebleExperience/Bot3\">Bo³+t</a>" + " | "
+                        + "<a href=\"https://t.me/Velosh\">Velosh</a>"                    
                 );
                 sendMessage.setChatId(Objects.requireNonNull(SourceForgeSetup.getSfConf("bot-announcement-id")));
                 idGSI = bot.sendMessageAsyncBase(sendMessage, update);
 
-                fullLogs.append("\n").append("Finished!");
+                fullLogs.append("\n").append("-> Finished!");
                 bot.editMessage(fullLogs.toString(), update, id);
 
                 /*
@@ -673,6 +705,7 @@ public class ErfanGSIs extends Command {
                 vendorOverlays.set(null);
                 odmOverlays.set(null);
                 infoGSI = null;
+                developerNoticeGSI = null;
                 arr.clear();
                 gsiCmdObj.clean();
             } else {
