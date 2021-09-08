@@ -43,8 +43,8 @@ public class About extends Command {
 
         List<InlineKeyboardButton> rowInline2 = new ArrayList<>();
         InlineKeyboardButton RIL2 = new InlineKeyboardButton();
-        RIL2.setText(prefs.getString("about_treble_channel"));
-        RIL2.setUrl("https://t.me/trebleexperience");
+        RIL2.setText(prefs.getString("about_rk137_channel"));
+        RIL2.setUrl("https://t.me/rk137gsi");
         rowInline2.add(RIL2);
 
         rowsInline.add(rowInline);
