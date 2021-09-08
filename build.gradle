@@ -13,7 +13,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 mainClassName = 'com.vegazsdev.bobobot.Main'
 group 'com.vegazsdev.bobobot'
-version '1.6.0'
+version '1.7.0'
 
 sourceCompatibility = 16
 
