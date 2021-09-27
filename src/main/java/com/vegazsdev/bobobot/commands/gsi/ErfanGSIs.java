@@ -400,6 +400,10 @@ public class ErfanGSIs extends Command {
                                 -> modelName = "Google Pixel";
                     }
                 }
+            } else if (Objects.requireNonNull(brand).equals("Redmi")) {
+                if (modelName.equals("Atoll device")) {
+                    modelName = "Redmi Note 9S/Redmi Note 9 Pro/Redmi Note 9 Pro Max/POCO M2 Pro";
+                }
             }
 
             /*
