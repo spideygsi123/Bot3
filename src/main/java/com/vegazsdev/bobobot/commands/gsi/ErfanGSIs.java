@@ -653,7 +653,7 @@ public class ErfanGSIs extends Command {
                 /*
                  * Send GSI message
                  */
-                sendMessage.setText("<b>Requested " + gsiCmdObj.getGsi() + " GSI + SGSI</b>"
+                sendMessage.setText("<b>Requested " + gsiCmdObj.getGsi() + " | GSI + SGSI</b>"
                         + "\n<b>From</b> " + getModelOfOutput(toolPath + "output")
                         + "\n<b>Built by</b> <a href=\"" + "tg://user?id=" + builderID + "\">" + builder + "</a>"
                         + "\n\n<b>Information</b>\n<code>" + descGSI
