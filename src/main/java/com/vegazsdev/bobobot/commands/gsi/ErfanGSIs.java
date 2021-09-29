@@ -398,6 +398,8 @@ public class ErfanGSIs extends Command {
                                 -> modelName = "Google Pixel XL";
                         case "sailfish-user", "aosp_sailfish-user", "aosp_sailfish-userdebug", "aosp_sailfish-eng"
                                 -> modelName = "Google Pixel";
+                        default
+                                -> modelName = "Google Pixel (?)";
                     }
                 }
             } else if (Objects.requireNonNull(brand).equals("Redmi")) {
