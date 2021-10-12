@@ -171,27 +171,42 @@ public class Main {
             logger.info(XMLs.getFromStringsXML("strings-en.xml", "issue_with_index_chat"));
         } else {
             /*
-             * Get public & private chats and set into temp String[] var
+             * PrefObj, chatPrefs
              */
-            String[] chatIDs = {
-                    Config.getDefConfig("privateChat"), Config.getDefConfig("requestChat")
-            };
+            PrefObj chatPrefs = TelegramBot.getPrefs(Double.parseDouble(Objects.requireNonNull(Config.getDefConfig("privateChat"))));
 
             /*
-             * Check with for{}
+             * Check if the database exists for private chat
              */
-            for (String chatID : chatIDs) {
-                /*
-                 * PrefObj, chatPrefs
-                 */
-                PrefObj chatPrefs = TelegramBot.getPrefs(Double.parseDouble(Objects.requireNonNull(chatID)));
+            if (chatPrefs == null) {
+                logger.info("There is no database for: " + Config.getDefConfig("privateChat") + ", creating one...");
+                new PrefObj(0, "strings-en.xml", "/");
+            }
+
+            /*
+             * Support multiple request chats
+             */
+            if (Objects.requireNonNull(Config.getDefConfig("requestChat")).contains(",")) {
+                String[] requestChats = Objects.requireNonNull(Config.getDefConfig("requestChat")).split(",");
+                for (String requestChat : requestChats) {
+                    /*
+                     * PrefObj, chatPrefs
+                     */
+                    chatPrefs = TelegramBot.getPrefs(Double.parseDouble(requestChat));
+                    if (chatPrefs == null) {
+                        logger.info("There is no database for: " + requestChat + ", creating one...");
+                        new PrefObj(0, "strings-en.xml", "/");
+                    }
+                }
+            } else {
+                chatPrefs = TelegramBot.getPrefs(Double.parseDouble(Objects.requireNonNull(Config.getDefConfig("requestChat"))));
 
                 /*
-                 * Check if the database exists for public/request chats (request command)
+                 * Check if the database exists for request chat
                  */
                 if (chatPrefs == null) {
-                    logger.info("There is no database for: " + chatID + ", creating one...");
-                    new PrefObj(0, "strings-en.xml", "!");
+                    logger.info("There is no database for: " + Config.getDefConfig("requestChat") + ", creating one...");
+                    new PrefObj(0, "strings-en.xml", "/");
                 }
             }
         }

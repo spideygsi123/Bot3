@@ -55,7 +55,7 @@ public class Request extends Command {
                 message.setChatId(chatId);
 
                 if (!(update.getMessage().getFrom().getId() == Float.parseFloat(String.valueOf(777000)))) {
-                    if (update.getMessage().getChatId() == Float.parseFloat(Objects.requireNonNull(Config.getDefConfig("requestChat")))) {
+                    if (Objects.requireNonNull(Config.getDefConfig("requestChat")).contains(String.valueOf(update.getMessage().getChatId()))) {
                         if (Pattern.matches(validLink, msgComparableRaw[1])) {
                             // Delete the message who user sent
                             bot.deleteMessage(chatId, update.getMessage().getMessageId(), update);
