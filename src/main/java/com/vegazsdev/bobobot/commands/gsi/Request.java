@@ -46,7 +46,7 @@ public class Request extends Command {
                 int id = 0;
 
                 // Regex for valid link
-                String validLink = "(http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?";
+                String validLink = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
 
                 // General base: SendMessage() and switch() things
                 SendMessage message = new SendMessage();
