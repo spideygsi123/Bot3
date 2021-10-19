@@ -67,10 +67,10 @@ public class XiaoxindadaSGSIs extends Command {
     /**
      * Get supported versions from XiaoxindadaSGSIs tool.
      */
-    private final File[] supportedSGSIs9 = new File(toolPath + "fixbug").listFiles(File::isDirectory);
-    private final File[] supportedSGSIs10 = new File(toolPath + "fixbug").listFiles(File::isDirectory);
-    private final File[] supportedSGSIs11 = new File(toolPath + "fixbug").listFiles(File::isDirectory);
-    private final File[] supportedSGSIs12 = new File(toolPath + "fixbug").listFiles(File::isDirectory);
+    private final File[] supportedSGSIs9 = new File(toolPath + "other/roms").listFiles(File::isDirectory);
+    private final File[] supportedSGSIs10 = new File(toolPath + "other/roms").listFiles(File::isDirectory);
+    private final File[] supportedSGSIs11 = new File(toolPath + "other/roms").listFiles(File::isDirectory);
+    private final File[] supportedSGSIs12 = new File(toolPath + "other/roms").listFiles(File::isDirectory);
 
     /**
      * Some workarounds.
@@ -309,7 +309,7 @@ public class XiaoxindadaSGSIs extends Command {
          * List the files
          */
         for (final File fileEntry : Objects.requireNonNull(outputFolder.listFiles())) {
-            if (fileEntry.getName().endsWith(".txt") && !fileEntry.getName().contains("build_info")) {
+            if (fileEntry.getName().endsWith(".txt") && !fileEntry.getName().contains("System-Tree")) {
                 file = new File(String.valueOf(fileEntry));
             }
         }
@@ -516,7 +516,7 @@ public class XiaoxindadaSGSIs extends Command {
                 bot.editMessage(fullLogs.toString(), update, id);
 
                 /*
-                 * Get files inside XiaoxindadaSGSIs/SGSI
+                 * Get files inside XiaoxindadaSGSIs/output
                  */
                 String[] gzipFiles = listFilesForFolder(new File("XiaoxindadaSGSIs" + "/output"));
 
@@ -547,7 +547,7 @@ public class XiaoxindadaSGSIs extends Command {
                     paths
                             .filter(Files::isRegularFile)
                             .forEach(fileName -> {
-                                if (fileName.toString().endsWith(".gz") || fileName.toString().endsWith("build_info.txt")) {
+                                if (fileName.toString().endsWith(".gz") || fileName.toString().endsWith(".txt")) {
                                     arr.add(fileName.toString());
                                     if (fileName.toString().contains("Aonly")) {
                                         aonly.set(FilenameUtils.getBaseName(fileName.toString()) + "." + FilenameUtils.getExtension(fileName.toString()));
@@ -559,7 +559,7 @@ public class XiaoxindadaSGSIs extends Command {
                                         odmOverlays.set(FilenameUtils.getBaseName(fileName.toString()) + "." + FilenameUtils.getExtension(fileName.toString()));
                                     }
                                 }
-                                if (fileName.toString().contains(".txt") && !fileName.toString().contains("build_info")) {
+                                if (fileName.toString().contains(".txt") && !fileName.toString().contains("System-Tree")) {
                                     infoSGSI = fileName.toString();
                                 }
                             });
@@ -588,6 +588,8 @@ public class XiaoxindadaSGSIs extends Command {
                     gsiCmdObj.setGsi(gsiCmdObj.getGsi().split(":")[1]);
                     gsiCmdObj.setGsi(gsiCmdObj.getGsi().replace("-", " "));
                 }
+                fullLogs.append("\n").append("<code>-> Download - https://sourceforge.net/projects/gsis137/files/SGSI/").append(re).append(ab).append("</code>");
+                bot.editMessage(fullLogs.toString(), update, id);
 
                 /*
                  * Prepare GSI message
@@ -664,9 +666,9 @@ public class XiaoxindadaSGSIs extends Command {
                         + noticeSGSI
                         + developerNoticeSGSI
                         + "<b>✵ RK137 GSI ✵</b>" + "\n"
-                        + "<a href=\"https://t.me/rk137gsi\">GSI Channel</a> | "<a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/SGSI\">SF Folder</a>"
+                        + "<a href=\"https://t.me/rk137gsi\">GSI Channel</a> | <a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/SGSI\">SF Folder</a>"
                         + "\n\n<b>Credits :</b>" + "\n"
-                        + "<a href=\"https://github.com/Xiaoxindada\">Xiaoxindada Abdi</a>" + " | "
+                        + "<a href=\"https://github.com/Xiaoxindada\">Xiaoxindada</a>" + " | "
                         + "<a href=\"https://github.com/TrebleExperience/Bot3\">Bo³+t</a>" + " | "
                         + "<a href=\"https://t.me/Velosh\">Velosh</a>"                    
                 );
@@ -775,19 +777,19 @@ public class XiaoxindadaSGSIs extends Command {
         if (supportedSGSIsPandQ != null && supportedSGSIsRandS != null) {
             bot.sendReply(prefs.getString("xgsi_supported_types")
                     .replace("%1",
-                            Arrays.toString(supportedSGSIs9).replace(toolPath + "fixbug", "")
+                            Arrays.toString(supportedSGSIs9).replace(toolPath + "other/roms", "")
                                     .replace("[", "")
                                     .replace("]", ""))
                     .replace("%2",
-                            Arrays.toString(supportedSGSIs10).replace(toolPath + "fixbug", "")
+                            Arrays.toString(supportedSGSIs10).replace(toolPath + "other/roms", "")
                                     .replace("[", "")
                                     .replace("]", ""))
                     .replace("%3",
-                            Arrays.toString(supportedSGSIs11).replace(toolPath + "fixbug", "")
+                            Arrays.toString(supportedSGSIs11).replace(toolPath + "other/roms", "")
                                     .replace("[", "")
                                     .replace("]", ""))
                     .replace("%4",
-                            Arrays.toString(supportedSGSIs12).replace(toolPath + "fixbug", "")
+                            Arrays.toString(supportedSGSIs12).replace(toolPath + "other/roms", "")
                                     .replace("[", "")
                                     .replace("]", "")), update);
         } else {

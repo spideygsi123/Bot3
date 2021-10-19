@@ -62,7 +62,7 @@ public class ErfanGSIs extends Command {
      */
     private static final ArrayList<GSICmdObj> queue = new ArrayList<>();
     private static boolean isPorting = false;
-    private final String toolPath = "XiaoxindadaSGSIs/";
+    private final String toolPath = "ErfanGSIs/";
 
     /**
      * Get supported versions from ErfanGSIs tool.
@@ -148,7 +148,7 @@ public class ErfanGSIs extends Command {
                 default -> {
                     messageError = prefs.getString("egsi_fail_to_build_gsi");
                     if (userHasPortPermissions(update.getMessage().getFrom().getId().toString())) {
-                        if (!FileTools.checkIfFolderExists("XiaoxindadaSGSIs")) {
+                        if (!FileTools.checkIfFolderExists("ErfanGSIs")) {
                             bot.sendReply(prefs.getString("egsi_dont_exists_tool_folder"), update);
                         } else {
                             GSICmdObj gsiCommand = isCommandValid(update);
@@ -546,7 +546,7 @@ public class ErfanGSIs extends Command {
                     paths
                             .filter(Files::isRegularFile)
                             .forEach(fileName -> {
-                                if (fileName.toString().endsWith(".gz") || fileName.toString().endsWith("System-Tree.txt")) {
+                                if (fileName.toString().endsWith(".gz") || fileName.toString().endsWith(".txt")) {
                                     arr.add(fileName.toString());
                                     if (fileName.toString().contains("Aonly")) {
                                         aonly.set(FilenameUtils.getBaseName(fileName.toString()) + "." + FilenameUtils.getExtension(fileName.toString()));
@@ -587,7 +587,8 @@ public class ErfanGSIs extends Command {
                     gsiCmdObj.setGsi(gsiCmdObj.getGsi().split(":")[1]);
                     gsiCmdObj.setGsi(gsiCmdObj.getGsi().replace("-", " "));
                 }
-
+                fullLogs.append("\n").append("<code>-> Download - https://sourceforge.net/projects/gsis137/files/GSI/").append(re).append(ab).append("</code>");
+                bot.editMessage(fullLogs.toString(), update, id);
                 /*
                  * Prepare GSI message
                  */
@@ -663,7 +664,7 @@ public class ErfanGSIs extends Command {
                         + noticeGSI
                         + developerNoticeGSI
                         + "<b>✵ RK137 GSI ✵</b>" + "\n"
-                        + "<a href=\"https://t.me/rk137gsi\">GSI Channel</a> |  "<a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/GSI\">SF Folder</a>"
+                        + "<a href=\"https://t.me/rk137gsi\">GSI Channel</a> |  <a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/GSI\">SF Folder</a>"
                         + "\n\n<b>Credits :</b>" + "\n"
                         + "<a href=\"https://github.com/Erfanoabdi\">Erfan Abdi</a>" + " | "
                         + "<a href=\"https://github.com/TrebleExperience/Bot3\">Bo³+t</a>" + " | "
