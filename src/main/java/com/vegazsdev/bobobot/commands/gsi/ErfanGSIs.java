@@ -341,7 +341,7 @@ public class ErfanGSIs extends Command {
             else if (modelName.toLowerCase().contains("qssi"))
                 modelName = "Qualcomm Single System Image";
             else if (modelName.toLowerCase().contains("miatoll"))
-                modelName = "Redmi Note 9S/Redmi Note 9 Pro/Redmi Note 9 Pro Max/POCO M2 Pro";
+                modelName = "Redmi Note 9*";
             else if (modelName.toLowerCase().contains("surya"))
                 modelName = "Poco X3";
             else if (modelName.toLowerCase().contains("lavender"))
@@ -373,25 +373,49 @@ public class ErfanGSIs extends Command {
             else if (modelName.equals(" "))
                 modelName = "Generic";
 
-            if (Objects.requireNonNull(brand).equals("google")) {
+            if (Objects.requireNonNull(brand).equals("google") || Objects.requireNonNull(brand).equals("Android")) {
                 if (modelName.equals("AOSP/Pixel (Mainline) Device")) {
                     switch (Objects.requireNonNull(buildType)) {
                         // only Pixel which have QP, RP & SP (Q, R & S)
-                        case "barbet-user" -> modelName = "Google Pixel 5a";
-                        case "redfin-user" -> modelName = "Google Pixel 5";
-                        case "bramble-user" -> modelName = "Google Pixel 4a 5G";
-                        case "sunfish-user" -> modelName = "Google Pixel 4a";
-                        case "coral-user" -> modelName = "Google Pixel 4 XL";
-                        case "flame-user" -> modelName = "Google Pixel 4";
-                        case "bonito-user" -> modelName = "Google Pixel 3a XL";
-                        case "sargo-user" -> modelName = "Google Pixel 3a";
-                        case "crosshatch-user" -> modelName = "Google Pixel 3 XL";
-                        case "blueline-user" -> modelName = "Google Pixel 3";
-                        case "taimen-user" -> modelName = "Google Pixel 2 XL";
-                        case "walleye-user" -> modelName = "Google Pixel 2";
-                        case "marlin-user" -> modelName = "Google Pixel XL";
-                        case "sailfish-user" -> modelName = "Google Pixel";
+                        case "raven-user", "aosp_raven-user", "aosp_raven-userdebug", "aosp_raven-eng"
+                                -> modelName = "Google Pixel 6 Pro";
+                        case "oriel-user", "aosp_oriel-user", "aosp_oriel-userdebug", "aosp_oriel-eng"
+                                -> modelName = "Google Pixel 6";
+                        case "barbet-user", "aosp_barbet-user", "aosp_barbet-userdebug", "aosp_barbet-eng"
+                                -> modelName = "Google Pixel 5a";
+                        case "redfin-user", "aosp_redfin-user", "aosp_redfin-userdebug", "aosp_redfin-eng"
+                                -> modelName = "Google Pixel 5";
+                        case "bramble-user", "aosp_bramble-user", "aosp_bramble-userdebug", "aosp_bramble-eng"
+                                -> modelName = "Google Pixel 4a 5G";
+                        case "sunfish-user", "aosp_sunfish-user", "aosp_sunfish-userdebug", "aosp_sunfish-eng"
+                                -> modelName = "Google Pixel 4a";
+                        case "coral-user", "aosp_coral-user", "aosp_coral-userdebug", "aosp_coral-eng"
+                                -> modelName = "Google Pixel 4 XL";
+                        case "flame-user", "aosp_flame-user", "aosp_flame-userdebug", "aosp_flame-eng"
+                                -> modelName = "Google Pixel 4";
+                        case "bonito-user", "aosp_bonito-user", "aosp_bonito-userdebug", "aosp_bonito-eng"
+                                -> modelName = "Google Pixel 3a XL";
+                        case "sargo-user", "aosp_sargo-user", "aosp_sargo-userdebug", "aosp_sargo-eng"
+                                -> modelName = "Google Pixel 3a";
+                        case "crosshatch-user", "aosp_crosshatch-user", "aosp_crosshatch-userdebug", "aosp_crosshatch-eng"
+                                -> modelName = "Google Pixel 3 XL";
+                        case "blueline-user", "aosp_blueline-user", "aosp_blueline-userdebug", "aosp_blueline-eng"
+                                -> modelName = "Google Pixel 3";
+                        case "taimen-user", "aosp_taimen-user", "aosp_taimen-userdebug", "aosp_taimen-eng"
+                                -> modelName = "Google Pixel 2 XL";
+                        case "walleye-user", "aosp_walleye-user", "aosp_walleye-userdebug", "aosp_walleye-eng"
+                                -> modelName = "Google Pixel 2";
+                        case "marlin-user", "aosp_marlin-user", "aosp_marlin-userdebug", "aosp_marlin-eng"
+                                -> modelName = "Google Pixel XL";
+                        case "sailfish-user", "aosp_sailfish-user", "aosp_sailfish-userdebug", "aosp_sailfish-eng"
+                                -> modelName = "Google Pixel";
+                        default
+                                -> modelName = "Google Pixel *";
                     }
+                }
+            } else if (Objects.requireNonNull(brand).equals("Redmi")) {
+                if (modelName.equals("Atoll device")) {
+                    modelName = "Redmi Note 9*";
                 }
             }
 
