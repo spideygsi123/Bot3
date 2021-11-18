@@ -67,8 +67,6 @@ public class ErfanGSIs extends Command {
     /**
      * Get supported versions from ErfanGSIs tool.
      */
-    private final File[] supportedGSIs9 = new File(toolPath + "roms/9").listFiles(File::isDirectory);
-    private final File[] supportedGSIs10 = new File(toolPath + "roms/10").listFiles(File::isDirectory);
     private final File[] supportedGSIs11 = new File(toolPath + "roms/11").listFiles(File::isDirectory);
     private final File[] supportedGSIs12 = new File(toolPath + "roms/S").listFiles(File::isDirectory);
 
@@ -250,10 +248,9 @@ public class ErfanGSIs extends Command {
      * It checks if the tool is updated (if has R/S support), check if the ROM exists too.
      */
     private boolean isGSIValid(String gsi) {
-        File[] supportedGSIsPandQ = ArrayUtils.addAll(supportedGSIs9, supportedGSIs10);
         File[] supportedGSIsRandS = ArrayUtils.addAll(supportedGSIs11, supportedGSIs12);
 
-        if (supportedGSIsPandQ == null || supportedGSIsRandS == null) return false;
+        if (supportedGSIsRandS == null) return false;
 
         boolean canRunYet = true;
 
@@ -262,11 +259,6 @@ public class ErfanGSIs extends Command {
 
             if (gsi.contains(":")) {
                 gsi2 = gsi.split(":")[0];
-            }
-
-            for (File supportedGSI : Objects.requireNonNull(supportedGSIsPandQ)) {
-                canRunYet = false;
-                if (Objects.requireNonNullElse(gsi2, gsi).equals(supportedGSI.getName())) return true;
             }
 
             if (canRunYet) {
@@ -512,13 +504,13 @@ public class ErfanGSIs extends Command {
 
             while ((line = bufferedReader.readLine()) != null) {
                 line = "<code>" + line + "</code>";
-                if (line.contains("Downloading firmware to:")) {
+                if (line.contains("Downloading firmware")) {
                     weDontNeedAria2Logs = false;
                     fullLogs.append("\n").append(line);
                     bot.editMessage(fullLogs.toString(), update, id);
                 }
 
-                if (line.contains("Create Temp and out dir")) {
+                if (line.contains("Extracting")) {
                     weDontNeedAria2Logs = true;
                 }
 
@@ -793,24 +785,15 @@ public class ErfanGSIs extends Command {
      * Common message for list/jurl2gsi args
      */
     public void sendSupportedROMs(Update update, TelegramBot bot, PrefObj prefs) {
-        File[] supportedGSIsPandQ = ArrayUtils.addAll(supportedGSIs9, supportedGSIs10);
         File[] supportedGSIsRandS = ArrayUtils.addAll(supportedGSIs11, supportedGSIs12);
 
-        if (supportedGSIsPandQ != null && supportedGSIsRandS != null) {
+        if (supportedGSIsRandS != null) {
             bot.sendReply(prefs.getString("egsi_supported_types")
                     .replace("%1",
-                            Arrays.toString(supportedGSIs9).replace(toolPath + "roms/9/", "")
-                                    .replace("[", "")
-                                    .replace("]", ""))
-                    .replace("%2",
-                            Arrays.toString(supportedGSIs10).replace(toolPath + "roms/10/", "")
-                                    .replace("[", "")
-                                    .replace("]", ""))
-                    .replace("%3",
                             Arrays.toString(supportedGSIs11).replace(toolPath + "roms/11/", "")
                                     .replace("[", "")
                                     .replace("]", ""))
-                    .replace("%4",
+                    .replace("%2",
                             Arrays.toString(supportedGSIs12).replace(toolPath + "roms/S/", "")
                                     .replace("[", "")
                                     .replace("]", "")), update);

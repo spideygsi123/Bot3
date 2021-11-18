@@ -67,10 +67,7 @@ public class XiaoxindadaSGSIs extends Command {
     /**
      * Get supported versions from XiaoxindadaSGSIs tool.
      */
-    private final File[] supportedSGSIs9 = new File(toolPath + "other/roms").listFiles(File::isDirectory);
-    private final File[] supportedSGSIs10 = new File(toolPath + "other/roms").listFiles(File::isDirectory);
-    private final File[] supportedSGSIs11 = new File(toolPath + "other/roms").listFiles(File::isDirectory);
-    private final File[] supportedSGSIs12 = new File(toolPath + "other/roms").listFiles(File::isDirectory);
+    private final File[] supportedSGSIs12 = new File(toolPath + "other/roms/").listFiles(File::isDirectory);
 
     /**
      * Some workarounds.
@@ -247,13 +244,12 @@ public class XiaoxindadaSGSIs extends Command {
 
     /**
      * Check if the SGSI is valid.
-     * It checks if the tool is updated (if has R/S support), check if the ROM exists too.
+     * It checks if the tool is updated (if has S support), check if the ROM exists too.
      */
     private boolean isSGSIValid(String gsi) {
-        File[] supportedSGSIsPandQ = ArrayUtils.addAll(supportedSGSIs9, supportedSGSIs10);
-        File[] supportedSGSIsRandS = ArrayUtils.addAll(supportedSGSIs11, supportedSGSIs12);
+        File[] supportedSGSIsS = ArrayUtils.addAll(supportedSGSIs12);
 
-        if (supportedSGSIsPandQ == null || supportedSGSIsRandS == null) return false;
+        if (supportedSGSIsS == null) return false;
 
         boolean canRunYet = true;
 
@@ -263,14 +259,8 @@ public class XiaoxindadaSGSIs extends Command {
             if (gsi.contains(":")) {
                 gsi2 = gsi.split(":")[0];
             }
-
-            for (File supportedGSI : Objects.requireNonNull(supportedSGSIsPandQ)) {
-                canRunYet = false;
-                if (Objects.requireNonNullElse(gsi2, gsi).equals(supportedGSI.getName())) return true;
-            }
-
             if (canRunYet) {
-                for (File supportedGSI : Objects.requireNonNull(supportedSGSIsRandS)) {
+                for (File supportedGSI : Objects.requireNonNull(supportedSGSIsS)) {
                     if (Objects.requireNonNullElse(gsi2, gsi).equals(supportedGSI.getName())) return true;
                 }
             }
@@ -519,7 +509,7 @@ public class XiaoxindadaSGSIs extends Command {
                     bot.editMessage(fullLogs.toString(), update, id);
                 }
 
-                if (line.contains("Environment")) {
+                if (line.contains("Extracting")) {
                     weDontNeedAria2Logs = true;
                 }
 
@@ -795,25 +785,12 @@ public class XiaoxindadaSGSIs extends Command {
      * Common message for list/jurl2sgsi args
      */
     public void sendSupportedROMs(Update update, TelegramBot bot, PrefObj prefs) {
-        File[] supportedSGSIsPandQ = ArrayUtils.addAll(supportedSGSIs9, supportedSGSIs10);
-        File[] supportedSGSIsRandS = ArrayUtils.addAll(supportedSGSIs11, supportedSGSIs12);
+        File[] supportedSGSIsS = ArrayUtils.addAll(supportedSGSIs12);
 
-        if (supportedSGSIsPandQ != null && supportedSGSIsRandS != null) {
+        if (supportedSGSIsS != null) {
             bot.sendReply(prefs.getString("xgsi_supported_types")
                     .replace("%1",
-                            Arrays.toString(supportedSGSIs9).replace(toolPath + "other/roms", "")
-                                    .replace("[", "")
-                                    .replace("]", ""))
-                    .replace("%2",
-                            Arrays.toString(supportedSGSIs10).replace(toolPath + "other/roms", "")
-                                    .replace("[", "")
-                                    .replace("]", ""))
-                    .replace("%3",
-                            Arrays.toString(supportedSGSIs11).replace(toolPath + "other/roms", "")
-                                    .replace("[", "")
-                                    .replace("]", ""))
-                    .replace("%4",
-                            Arrays.toString(supportedSGSIs12).replace(toolPath + "other/roms", "")
+                            Arrays.toString(supportedSGSIs12).replace(toolPath + "other/roms/", "")
                                     .replace("[", "")
                                     .replace("]", "")), update);
         } else {
