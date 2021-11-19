@@ -53,10 +53,10 @@
     <egsi_current_queue>&lt;b&gt;Ports on Queue:&lt;/b&gt; %1&#xA;&lt;i&gt;%2&lt;/i&gt;</egsi_current_queue>
     <egsi_added_to_queue>Added to Queue</egsi_added_to_queue>
     <egsi_no_ports_queue>No ports on queue</egsi_no_ports_queue>
-    <egsi_supported_types>&lt;b&gt;GSI Type or URL is not valid!&lt;/b&gt;&#xA;&#xA;Supported types on Android 11: %1&#xA;&#xA;Supported types on Android S: %2</egsi_supported_types>
+    <egsi_supported_types>&lt;b&gt;GSI Type or URL is not valid!&lt;/b&gt;&#xA;&#xA;Supported types on Android 11: %1&#xA;&#xA;Supported types on Android 12: %2</egsi_supported_types>
     <egsi_dont_exists_tool_folder>The ErfanGSIs tool folder does not exist.</egsi_dont_exists_tool_folder>
     <egsi_something_is_wrong>Something is wrong, check if you are using the updated ErfanGSIs tool.</egsi_something_is_wrong>
-    <egsi_fail_to_build_gsi>Beep bop... Something wrong isn't correct, the GSI process failed, check if something is wrong.</egsi_fail_to_build_gsi>
+    <egsi_fail_to_build_gsi>Beep bop... the GSI process failed, check if something is wrong.</egsi_fail_to_build_gsi>
 
     <!-- XiaoxindadaSGSIs Command -->
     <xgsi_allowed>UserID: &lt;b&gt;%1&lt;/b&gt; now has port permissions</xgsi_allowed>
@@ -67,7 +67,17 @@
     <xgsi_supported_types>&lt;b&gt;SGSI Type or URL is not valid!&lt;/b&gt;&#xA;&#xA;Supported types on Android 12: %1</xgsi_supported_types>
     <xgsi_dont_exists_tool_folder>The XiaoxindadaSGSIs tool folder does not exist.</xgsi_dont_exists_tool_folder>
     <xgsi_something_is_wrong>Something is wrong, check if you are using the updated XiaoxindadaSGSIs tool.</xgsi_something_is_wrong>
-    <xgsi_fail_to_build_gsi>Beep bop... Something wrong isn't correct, the GSI process failed, check if something is wrong.</xgsi_fail_to_build_gsi>
+    <xgsi_fail_to_build_gsi>Beep bop... the SGSI process failed, check if something is wrong.</xgsi_fail_to_build_gsi>
+
+    <!-- DebloatGSIs Command -->
+    <dgsi_allowed>UserID: &lt;b&gt;%1&lt;/b&gt; now has port permissions</dgsi_allowed>
+    <dgsi_allow_by_reply>To add permissions, reply to user that you wanna add permissions, by using &lt;code&gt;%1%2 allowuser&lt;/code&gt;</dgsi_allow_by_reply>
+    <dgsi_current_queue>&lt;b&gt;Ports on Queue:&lt;/b&gt; %1&#xA;&lt;i&gt;%2&lt;/i&gt;</dgsi_current_queue>
+    <dgsi_added_to_queue>Added to Queue</dgsi_added_to_queue>
+    <dgsi_no_ports_queue>No ports on queue</dgsi_no_ports_queue>
+    <dgsi_dont_exists_tool_folder>The Debloat tool folder does not exist.</dgsi_dont_exists_tool_folder>
+    <dgsi_something_is_wrong>Something is wrong, check if you are using the updated Debloat tool.</dgsi_something_is_wrong>
+    <dgsi_fail_to_build_gsi>Beep bop... the GSI process failed, check something is wrong.</dgsi_fail_to_build_gsi>
 
     <!-- ChangeHotkey Command -->
     <chkey_help>Current bot hotkey on this chat: &lt;code&gt;%1&lt;/code&gt;&#xA;&lt;b&gt;Supported Hotkeys: %2&lt;/b&gt;</chkey_help>

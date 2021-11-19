@@ -33,16 +33,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 /**
- * Main command of the bot specialized in making SGSI (Xiaoxindada tool).
- * <p>
- * This class consists of doing SGSI using the Xiaoxindada tool, named XiaoxindadaSGSIs.
+ * Main command of the bot specialized in debloating GSI.
  * <p>
  * Some methods:
  * <ul>
  *     <li>{@link #isCommandValid(Update)}</li>
  *     <li>{@link #try2AvoidCodeInjection(String)}</li>
- *     <li>{@link #isSGSIValid(String)}</li>
- *     <li>{@link #createSGSI(GSICmdObj, TelegramBot)}</li>
+ *     <li>{@link #isGSIValid(String)}</li>
+ *     <li>{@link #createGSI(GSICmdObj, TelegramBot)}</li>
  *     <li>{@link #userHasPortPermissions(String)}</li>
  *     <li>{@link #getModelOfOutput(String)}</li>
  *     <li>{@link #addPortPerm(String)}</li>
@@ -50,35 +48,33 @@ import java.util.stream.Stream;
  * </ul>
  */
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
-public class XiaoxindadaSGSIs extends Command {
+public class DebloatGSIs extends Command {
 
     /**
      * Logger: To send warning, info & errors to terminal.
      */
-    private static final Logger logger = LoggerFactory.getLogger(XiaoxindadaSGSIs.class);
+    private static final Logger logger = LoggerFactory.getLogger(DebloatGSIs.class);
 
     /**
-     * Main variables to SGSI process.
+     * Main variables to GSI process.
      */
     private static final ArrayList<GSICmdObj> queue = new ArrayList<>();
     private static boolean isPorting = false;
-    private final String toolPath = "XiaoxindadaSGSIs/";
+    private final String toolPath = "Debloat/";
 
-    /**
-     * Get supported versions from XiaoxindadaSGSIs tool.
-     */
-    private final File[] supportedSGSIs12 = new File(toolPath + "other/roms/").listFiles(File::isDirectory);
+    private final File[] supportedGSIs11 = new File(toolPath + "roms/11").listFiles(File::isDirectory);
+    private final File[] supportedGSIs12 = new File(toolPath + "roms/S").listFiles(File::isDirectory);
 
     /**
      * Some workarounds.
      */
     private String messageError = "";
-    private String infoSGSI = "";
-    private String noticeSGSI = "";
-    private String developerNoticeSGSI = "";
+    private String infoGSI = "";
+    private String noticeGSI = "";
+    private String developerNoticeGSI = "";
 
-    public XiaoxindadaSGSIs() {
-        super("jurl2sgsi");
+    public DebloatGSIs() {
+        super("jurl2dgsi");
     }
 
     private static String[] listFilesForFolder(final File folder) {
@@ -104,10 +100,10 @@ public class XiaoxindadaSGSIs extends Command {
                     if (update.getMessage().getReplyToMessage() != null) {
                         String userid = update.getMessage().getReplyToMessage().getFrom().getId().toString();
                         if (addPortPerm(userid)) {
-                            bot.sendReply(prefs.getString("xgsi_allowed").replace("%1", userid), update);
+                            bot.sendReply(prefs.getString("dgsi_allowed").replace("%1", userid), update);
                         }
                     } else {
-                        bot.sendReply(prefs.getString("xgsi_allow_by_reply").replace("%1", prefs.getHotkey())
+                        bot.sendReply(prefs.getString("dgsi_allow_by_reply").replace("%1", prefs.getHotkey())
                                 .replace("%2", this.getAlias()), update);
                     }
                 }
@@ -117,17 +113,17 @@ public class XiaoxindadaSGSIs extends Command {
                         for (int i = 0; i < queue.size(); i++) {
                             v.append("#").append(i + 1).append(": ").append(queue.get(i).getGsi()).append("\n");
                         }
-                        bot.sendReply(prefs.getString("xgsi_current_queue")
+                        bot.sendReply(prefs.getString("dgsi_current_queue")
                                 .replace("%2", v.toString())
                                 .replace("%1", String.valueOf(queue.size())), update);
                     } else {
-                        bot.sendReply(prefs.getString("xgsi_no_ports_queue"), update);
+                        bot.sendReply(prefs.getString("dgsi_no_ports_queue"), update);
                     }
                 }
                 case "cancel" -> {
                     if (isPorting) {
                         ProcessBuilder pb;
-                        pb = new ProcessBuilder("/bin/bash", "-c", "kill -TERM -- -$(ps ax | grep url2SGSI.sh | grep -v grep | awk '{print $1;}')");
+                        pb = new ProcessBuilder("/bin/bash", "-c", "kill -TERM -- -$(ps ax | grep url2Debloat.sh | grep -v grep | awk '{print $1;}')");
                         try {
                             pb.start();
                         } catch (IOException ignored) {}
@@ -138,32 +134,32 @@ public class XiaoxindadaSGSIs extends Command {
                             }
                         }
                     } else {
-                        bot.sendReply(prefs.getString("xgsi_no_ports_queue"), update);
+                        bot.sendReply(prefs.getString("dgsi_no_ports_queue"), update);
                     }
-                }
-                case "list", "roms", "sgsis" -> sendSupportedROMs(update, bot, prefs);
+               }
+                case "list", "roms", "gsis" -> sendSupportedROMs(update, bot, prefs);
                 default -> {
-                    messageError = prefs.getString("xgsi_fail_to_build_gsi");
+                    messageError = prefs.getString("dgsi_fail_to_build_gsi");
                     if (userHasPortPermissions(update.getMessage().getFrom().getId().toString())) {
-                        if (!FileTools.checkIfFolderExists("XiaoxindadaSGSIs")) {
-                            bot.sendReply(prefs.getString("xgsi_dont_exists_tool_folder"), update);
+                        if (!FileTools.checkIfFolderExists("Debloat")) {
+                            bot.sendReply(prefs.getString("dgsi_dont_exists_tool_folder"), update);
                         } else {
                             GSICmdObj gsiCommand = isCommandValid(update);
                             if (gsiCommand != null) {
-                                boolean isSGSITypeValid = isSGSIValid(gsiCommand.getGsi());
-                                if (isSGSITypeValid) {
+                                boolean isGSITypeValid = isGSIValid(gsiCommand.getGsi());
+                                if (isGSITypeValid) {
                                     if (!isPorting) {
                                         isPorting = true;
-                                        createSGSI(gsiCommand, bot);
+                                        createGSI(gsiCommand, bot);
                                         while (queue.size() != 0) {
                                             GSICmdObj portNow = queue.get(0);
                                             queue.remove(0);
-                                            createSGSI(portNow, bot);
+                                            createGSI(portNow, bot);
                                         }
                                         isPorting = false;
                                     } else {
                                         queue.add(gsiCommand);
-                                        bot.sendReply(prefs.getString("xgsi_added_to_queue"), update);
+                                        bot.sendReply(prefs.getString("dgsi_added_to_queue"), update);
                                     }
                                 } else {
                                     sendSupportedROMs(update, bot, prefs);
@@ -179,7 +175,7 @@ public class XiaoxindadaSGSIs extends Command {
     }
 
     /**
-     * Avoid shell usage on jurl2sgsi command.
+     * Avoid shell usage on jurl2debloat command.
      */
     private String try2AvoidCodeInjection(String parameters) {
         try {
@@ -193,7 +189,7 @@ public class XiaoxindadaSGSIs extends Command {
     }
 
     /**
-     * Check if the args passed to jurl2sgsi command is valid.
+     * Check if the args passed to jurl2debloat command is valid.
      */
     private GSICmdObj isCommandValid(Update update) {
         GSICmdObj gsiCmdObj = new GSICmdObj();
@@ -212,7 +208,7 @@ public class XiaoxindadaSGSIs extends Command {
                 param = try2AvoidCodeInjection(param);
                 paramComparableRaw = param.split(" ");
 
-                if (param.contains("-nv")) noticeSGSI = "<b>SGSI Notice</b>\nThis SGSI requires the vendor to have the same version of the system!\n\n";
+                noticeGSI = "<b>GSI Notice</b>\nThis GSI requires vndk30 vendor!\n\n";
 
                 StringBuilder stringBuilder = new StringBuilder();
                 for (String string : paramComparableRaw) {
@@ -221,9 +217,9 @@ public class XiaoxindadaSGSIs extends Command {
                     if (canContinueLoop) stringBuilder.append(string).append(" ");
                 }
 
-                developerNoticeSGSI = param.replace(String.valueOf(stringBuilder), "");
-                if (developerNoticeSGSI.contains(param)) developerNoticeSGSI = "";
-                if (!developerNoticeSGSI.equals("")) developerNoticeSGSI =
+                developerNoticeGSI = param.replace(String.valueOf(stringBuilder), "");
+                if (developerNoticeGSI.contains(param)) developerNoticeGSI = "";
+                if (!developerNoticeGSI.equals("")) developerNoticeGSI =
                         "<b>Developer Note</b>\n"
                         + param.replace(String.valueOf(stringBuilder), "")
                         + "\n\n";
@@ -243,36 +239,15 @@ public class XiaoxindadaSGSIs extends Command {
     }
 
     /**
-     * Check if the SGSI is valid.
-     * It checks if the tool is updated (if has S support), check if the ROM exists too.
+     * Check if the GSI is valid.
+     * It checks if the tool is updated (if has R/S support), check if the ROM exists too.
      */
-    private boolean isSGSIValid(String gsi) {
-        File[] supportedSGSIsS = ArrayUtils.addAll(supportedSGSIs12);
-
-        if (supportedSGSIsS == null) return false;
-
-        boolean canRunYet = true;
-
-        try {
-            String sgsi2 = null;
-
-            if (gsi.contains(":")) {
-                sgsi2 = gsi.split(":")[0];
-            }
-            if (canRunYet) {
-                for (File supportedSGSI : Objects.requireNonNull(supportedSGSIsS)) {
-                    if (Objects.requireNonNullElse(sgsi2, gsi).equals(supportedSGSI.getName())) return true;
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return false;
-        }
+    private boolean isGSIValid(String gsi) {
         return true;
     }
 
     /**
-     * Avoid users abuse, only users with port permission can use jurl2sgsi command.
+     * Avoid users abuse, only users with port permission can use jurl2gsi command.
      */
     private boolean userHasPortPermissions(String idAsString) {
         if (Objects.equals(Config.getDefConfig("bot-master"), idAsString)) {
@@ -439,11 +414,10 @@ public class XiaoxindadaSGSIs extends Command {
         }
     }
 
-
     /**
-     * Create a SGSI with one method.
+     * Debloat a GSI with one method.
      */
-    private void createSGSI(GSICmdObj gsiCmdObj, TelegramBot bot) {
+    private void createGSI(GSICmdObj gsiCmdObj, TelegramBot bot) {
         /*
          * Variables to bash
          */
@@ -453,7 +427,7 @@ public class XiaoxindadaSGSIs extends Command {
         BufferedReader bufferedReader = null;
 
         /*
-         * Pre-final SGSI process variables
+         * Pre-final GSI process variables
          */
         boolean success = false;
         Update update = gsiCmdObj.getUpdate();
@@ -462,15 +436,15 @@ public class XiaoxindadaSGSIs extends Command {
         Long builderID = update.getMessage().getFrom().getId();
 
         /*
-         * Start the SGSI process
+         * Start the GSI process
          */
         pb = new ProcessBuilder("/bin/bash", "-c",
-                "cd " + toolPath + " ; ./url2SGSI.sh '" + gsiCmdObj.getUrl() + "' " + gsiCmdObj.getGsi() + " " + gsiCmdObj.getParam()
+                "cd " + toolPath + " ; ./url2Debloat.sh '" + gsiCmdObj.getUrl() + "' " + gsiCmdObj.getGsi() + " " + gsiCmdObj.getParam()
         );
         fullLogs.append("<code>-> Starting process...</code>");
 
         /*
-         * Send the message, it's SGSI time!
+         * Send the message, it's GSI time!
          */
         int id = bot.sendReply(fullLogs.toString(), update);
 
@@ -516,23 +490,23 @@ public class XiaoxindadaSGSIs extends Command {
                 if (weDontNeedAria2Logs) {
                     fullLogs.append("\n").append(line);
                     bot.editMessage(fullLogs.toString(), update, id);
-                    if (line.contains("SGSI done")) {
+                    if (line.contains("GSI done")) {
                         success = true;
                     }
                 }
             }
 
             /*
-             * If the SGSI got true boolean, it will create gzip, upload, prepare message and send it to channel/group
+             * If the GSI got true boolean, it will create gzip, upload, prepare message and send it to channel/group
              */
             if (success) {
                 fullLogs.append("\n").append("<code>-> Creating gzip...</code>");
                 bot.editMessage(fullLogs.toString(), update, id);
 
                 /*
-                 * Get files inside XiaoxindadaSGSIs/output
+                 * Get files inside Debloat/output
                  */
-                String[] gzipFiles = listFilesForFolder(new File("XiaoxindadaSGSIs" + "/output"));
+                String[] gzipFiles = listFilesForFolder(new File("Debloat" + "/output"));
 
                 /*
                  * Gzip the files
@@ -555,9 +529,9 @@ public class XiaoxindadaSGSIs extends Command {
                 AtomicReference<String> odmOverlays = new AtomicReference<>("");
 
                 /*
-                 * Try to get files inside XiaoxindadaSGSIs/output and set into correct variable (ex: A/B image to A/B variable)
+                 * Try to get files inside ErfanGSIs/output and set into correct variable (ex: A/B image to A/B variable)
                  */
-                try (Stream<Path> paths = Files.walk(Paths.get("XiaoxindadaSGSIs/output/"))) {
+                try (Stream<Path> paths = Files.walk(Paths.get("ErfanGSIs/output/"))) {
                     paths
                             .filter(Files::isRegularFile)
                             .forEach(fileName -> {
@@ -574,7 +548,7 @@ public class XiaoxindadaSGSIs extends Command {
                                     }
                                 }
                                 if (fileName.toString().contains(".txt") && !fileName.toString().contains("System-Tree")) {
-                                    infoSGSI = fileName.toString();
+                                    infoGSI = fileName.toString();
                                 }
                             });
                 } catch (IOException e) {
@@ -590,20 +564,22 @@ public class XiaoxindadaSGSIs extends Command {
                 /*
                  * SourceForge upload time
                  */
-                String re = new SourceForgeUpload().uploadSgsi(arr, gsiCmdObj.getGsi());
+                String re = new SourceForgeUpload().uploadGsi(arr, gsiCmdObj.getGsi());
                 re = re + "/";
 
                 /*
-                 * Check the SGSI name has special name, like this:
-                 * !jurl2sgsi <url link> Generic:StatiXOS-Nuclear
+                 * Check the GSI name has special name, like this:
+                 * !jurl2gsi <url link> Generic:StatiXOS-Nuclear
                  * The name of this ROM is 'StatiXOS Nuclear' (without quotes), the '-' (char) will be the replacement char, to be used as a space
                  */
                 if (gsiCmdObj.getGsi().contains(":")) {
                     gsiCmdObj.setGsi(gsiCmdObj.getGsi().split(":")[1]);
                     gsiCmdObj.setGsi(gsiCmdObj.getGsi().replace("-", " "));
                 }
+                fullLogs.append("\n").append("<code>-> Download - https://sourceforge.net/projects/gsis137/files/GSI/").append(re).append(ab).append("</code>");
+                bot.editMessage(fullLogs.toString(), update, id);
                 /*
-                 * Prepare SGSI message
+                 * Prepare GSI message
                  */
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.setDisableWebPagePreview(true);
@@ -619,7 +595,7 @@ public class XiaoxindadaSGSIs extends Command {
                     List<InlineKeyboardButton> rowInline2 = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("Aonly Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/SGSI/" + re + aonly);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + aonly);
                     rowInline2.add(inlineKeyboardButton);
                     rowsInline.add(rowInline2);
                 }
@@ -628,7 +604,7 @@ public class XiaoxindadaSGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("A/B Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/SGSI/" + re + ab);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + ab);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -637,7 +613,7 @@ public class XiaoxindadaSGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("Vendor Overlays Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/SGSI/" + re + vendorOverlays);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + vendorOverlays);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -646,7 +622,7 @@ public class XiaoxindadaSGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("ODM Overlays Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/SGSI/" + re + odmOverlays);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + odmOverlays);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -658,33 +634,33 @@ public class XiaoxindadaSGSIs extends Command {
                 sendMessage.setReplyMarkup(markupInline);
 
                 /*
-                 * Info of SGSI image
+                 * Info of GSI image
                  */
-                String descSGSI = "" + new FileTools().readFile(infoSGSI).trim();
+                String descGSI = "" + new FileTools().readFile(infoGSI).trim();
 
                 /*
                  * Prepare message id
                  */
-                int idSGSI;
+                int idGSI;
 
                 /*
-                 * Send SGSI message
+                 * Send GSI message
                  */
-                sendMessage.setText("<b>" + gsiCmdObj.getGsi() + " SGSI</b>"
+                sendMessage.setText("<b>" + gsiCmdObj.getGsi() + " DGSI</b>"
                         + "\n<b>From</b> " + getModelOfOutput(toolPath + "output")
-                        + "\n\n<b>Information</b>\n<code>" + descSGSI
+                        + "\n\n<b>Information</b>\n<code>" + descGSI
                         + "</code>\n\n"
-                        + noticeSGSI
-                        + developerNoticeSGSI
+                        + noticeGSI
+                        + developerNoticeGSI
                         + "<b>✵ RK137 GSI ✵</b>" + "\n"
-                        + "<a href=\"https://t.me/rk137gsi\">GSI Channel</a> | <a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/SGSI\">SF Folder</a>"
+                        + "<a href=\"https://t.me/rk137gsi\">GSI Channel</a> |  <a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/GSI\">SF Folder</a>"
                         + "\n\n<b>Credits :</b>" + "\n"
-                        + "<a href=\"https://github.com/Xiaoxindada\">Xiaoxindada</a>" + " | "
+                        + "<a href=\"https://github.com/Erfanoabdi\">Erfan Abdi</a>" + " | "
                         + "<a href=\"https://github.com/TrebleExperience/Bot3\">Bo³+t</a>" + " | "
                         + "<a href=\"https://t.me/Velosh\">Velosh</a>"                    
                 );
                 sendMessage.setChatId(Objects.requireNonNull(SourceForgeSetup.getSfConf("bot-announcement-id")));
-                idSGSI = bot.sendMessageAsyncBase(sendMessage, update);
+                idGSI = bot.sendMessageAsyncBase(sendMessage, update);
 
                 fullLogs.append("\n").append("-> Finished!");
                 bot.editMessage(fullLogs.toString(), update, id);
@@ -692,7 +668,7 @@ public class XiaoxindadaSGSIs extends Command {
                 /*
                  * Reply kthx
                  */
-                if (idSGSI != 0) bot.sendReply("Done! Here the <a href=\"" + "https://t.me/" + Config.getDefConfig("publicChannel")  + "/" + idSGSI + "\">link</a> post", update);
+                if (idGSI != 0) bot.sendReply("Done! Here the <a href=\"" + "https://t.me/" + Config.getDefConfig("publicChannel")  + "/" + idGSI + "\">link</a> post", update);
 
                 /*
                  * Delete output/input folder with two codes (The first seems not worked so to make sure, use other code for it)
@@ -707,7 +683,7 @@ public class XiaoxindadaSGSIs extends Command {
                 FileUtils.deleteDirectory(new File(toolPath + "tmp"));
                 if (FileTools.checkIfFolderExists(toolPath + "tmp")) {
                     if (FileTools.deleteFolder(toolPath + "tmp")) {
-                        logger.info("tmp folder deleted");
+                        logger.info("Input folder deleted");
                     }
                 }
 
@@ -718,8 +694,8 @@ public class XiaoxindadaSGSIs extends Command {
                 aonly.set(null);
                 vendorOverlays.set(null);
                 odmOverlays.set(null);
-                infoSGSI = null;
-                developerNoticeSGSI = null;
+                infoGSI = null;
+                developerNoticeGSI = null;
                 arr.clear();
                 gsiCmdObj.clean();
             } else {
@@ -777,21 +753,24 @@ public class XiaoxindadaSGSIs extends Command {
             return false;
         }
     }
-
-    /**
-     * Common message for list/jurl2sgsi args
+/**
+     * Common message for list/jurl2debloat args
      */
     public void sendSupportedROMs(Update update, TelegramBot bot, PrefObj prefs) {
-        File[] supportedSGSIsS = ArrayUtils.addAll(supportedSGSIs12);
+        File[] supportedGSIsRandS = ArrayUtils.addAll(supportedGSIs11, supportedGSIs12);
 
-        if (supportedSGSIsS != null) {
-            bot.sendReply(prefs.getString("xgsi_supported_types")
+        if (supportedGSIsRandS != null) {
+            bot.sendReply(prefs.getString("egsi_supported_types")
                     .replace("%1",
-                            Arrays.toString(supportedSGSIs12).replace(toolPath + "other/roms/", "")
+                            Arrays.toString(supportedGSIs11).replace(toolPath + "roms/11/", "")
+                                    .replace("[", "")
+                                    .replace("]", ""))
+                    .replace("%2",
+                            Arrays.toString(supportedGSIs12).replace(toolPath + "roms/S/", "")
                                     .replace("[", "")
                                     .replace("]", "")), update);
         } else {
-            bot.sendReply(prefs.getString("xgsi_something_is_wrong"), update);
+            bot.sendReply(prefs.getString("dgsi_something_is_wrong"), update);
         }
     }
 }

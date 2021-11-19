@@ -603,8 +603,6 @@ public class ErfanGSIs extends Command {
                     gsiCmdObj.setGsi(gsiCmdObj.getGsi().split(":")[1]);
                     gsiCmdObj.setGsi(gsiCmdObj.getGsi().replace("-", " "));
                 }
-                fullLogs.append("\n").append("<code>-> Download - https://sourceforge.net/projects/gsis137/files/GSI/").append(re).append(ab).append("</code>");
-                bot.editMessage(fullLogs.toString(), update, id);
                 /*
                  * Prepare GSI message
                  */
