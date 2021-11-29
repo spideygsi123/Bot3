@@ -679,9 +679,10 @@ public class XiaoxindadaSGSIs extends Command {
                         + "<b>✵ RK137 GSI ✵</b>" + "\n"
                         + "<a href=\"https://t.me/rk137gsi\">GSI Channel</a> | <a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/SGSI\">SF Folder</a>"
                         + "\n\n<b>Credits :</b>" + "\n"
-                        + "<a href=\"https://github.com/Xiaoxindada\">Xiaoxindada</a>" + " | "
-                        + "<a href=\"https://github.com/TrebleExperience/Bot3\">Bo³+t</a>" + " | "
-                        + "<a href=\"https://t.me/Velosh\">Velosh</a>"                    
+                        + "<a href=\"https://github.com/Erfanoabdi\">Erfan</a>" + " | "
+                        + "<a href=\"https://github.com/xiaoxindada\">Xiaoxindada</a>" + " | " 
+                        + "<a href=\"https://github.com/phhusson\">Phh</a>" + " | " 
+                        + "<a href=\"https://github.com/TrebleExperience\">Treble Exp</a>"
                 );
                 sendMessage.setChatId(Objects.requireNonNull(SourceForgeSetup.getSfConf("bot-announcement-id")));
                 idSGSI = bot.sendMessageAsyncBase(sendMessage, update);
@@ -692,7 +693,7 @@ public class XiaoxindadaSGSIs extends Command {
                 /*
                  * Reply kthx
                  */
-                if (idSGSI != 0) bot.sendReply("Done! Here the <a href=\"" + "https://t.me/" + Config.getDefConfig("publicChannel")  + "/" + idSGSI + "\">link</a> post", update);
+                if (idSGSI != 0) bot.sendReply("Done! Here is the <a href=\"" + "https://t.me/" + Config.getDefConfig("publicChannel")  + "/" + idSGSI + "\">link</a> post", update);
 
                 /*
                  * Delete output/input folder with two codes (The first seems not worked so to make sure, use other code for it)

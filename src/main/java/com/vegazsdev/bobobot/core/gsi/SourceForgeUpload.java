@@ -259,4 +259,39 @@ public String uploadSgsi(ArrayList<String> arrayList, String name) {
         }
         return null;
     }
+public String uploadDgsi(ArrayList<String> arrayList, String name) {
+
+        if (name.contains(":")) {
+            name = name.replace(":", " - ");
+        }
+
+        String toolPath = "Debloat/";
+        String model = getModelOfOutput(toolPath + "output");
+        name = name + " - " + model + " - " + RandomStringUtils.randomAlphanumeric(10).toUpperCase();
+        String path = "/home/frs/project/" + proj + "/GSI/" + name;
+
+        try {
+            JSch jsch = new JSch();
+
+            Session session = jsch.getSession(user, host);
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.setPassword(pass);
+            session.connect();
+
+            ChannelSftp sftpChannel = (ChannelSftp) session.openChannel("sftp");
+
+            sftpChannel.connect();
+            sftpChannel.mkdir(path);
+
+            for (String s : arrayList) {
+                if (!s.endsWith(".img")) {
+                    sftpChannel.put(s, path);
+                }
+            }
+            return name;
+        } catch (Exception exception) {
+            logger.error(exception.getMessage());
+        }
+        return null;
+    }
 }

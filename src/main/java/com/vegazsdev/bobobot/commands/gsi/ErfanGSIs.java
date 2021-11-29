@@ -68,7 +68,7 @@ public class ErfanGSIs extends Command {
      * Get supported versions from ErfanGSIs tool.
      */
     private final File[] supportedGSIs11 = new File(toolPath + "roms/11").listFiles(File::isDirectory);
-    private final File[] supportedGSIs12 = new File(toolPath + "roms/S").listFiles(File::isDirectory);
+    private final File[] supportedGSIs12 = new File(toolPath + "roms/12").listFiles(File::isDirectory);
 
     /**
      * Some workarounds.
@@ -680,9 +680,10 @@ public class ErfanGSIs extends Command {
                         + "<b>✵ RK137 GSI ✵</b>" + "\n"
                         + "<a href=\"https://t.me/rk137gsi\">GSI Channel</a> |  <a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/GSI\">SF Folder</a>"
                         + "\n\n<b>Credits :</b>" + "\n"
-                        + "<a href=\"https://github.com/Erfanoabdi\">Erfan Abdi</a>" + " | "
-                        + "<a href=\"https://github.com/TrebleExperience/Bot3\">Bo³+t</a>" + " | "
-                        + "<a href=\"https://t.me/Velosh\">Velosh</a>"                    
+                        + "<a href=\"https://github.com/Erfanoabdi\">Erfan</a>" + " | "
+                        + "<a href=\"https://github.com/xiaoxindada\">Xiaoxindada</a>" + " | " 
+                        + "<a href=\"https://github.com/phhusson\">Phh</a>" + " | " 
+                        + "<a href=\"https://github.com/TrebleExperience\">Treble Exp</a>"
                 );
                 sendMessage.setChatId(Objects.requireNonNull(SourceForgeSetup.getSfConf("bot-announcement-id")));
                 idGSI = bot.sendMessageAsyncBase(sendMessage, update);
@@ -693,7 +694,7 @@ public class ErfanGSIs extends Command {
                 /*
                  * Reply kthx
                  */
-                if (idGSI != 0) bot.sendReply("Done! Here the <a href=\"" + "https://t.me/" + Config.getDefConfig("publicChannel")  + "/" + idGSI + "\">link</a> post", update);
+                if (idGSI != 0) bot.sendReply("Done! Here is the <a href=\"" + "https://t.me/" + Config.getDefConfig("publicChannel")  + "/" + idGSI + "\">link</a> post", update);
 
                 /*
                  * Delete output/input folder with two codes (The first seems not worked so to make sure, use other code for it)
@@ -792,7 +793,7 @@ public class ErfanGSIs extends Command {
                                     .replace("[", "")
                                     .replace("]", ""))
                     .replace("%2",
-                            Arrays.toString(supportedGSIs12).replace(toolPath + "roms/S/", "")
+                            Arrays.toString(supportedGSIs12).replace(toolPath + "roms/12/", "")
                                     .replace("[", "")
                                     .replace("]", "")), update);
         } else {
