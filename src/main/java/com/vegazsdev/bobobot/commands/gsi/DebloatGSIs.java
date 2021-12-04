@@ -576,7 +576,7 @@ public class DebloatGSIs extends Command {
                     gsiCmdObj.setGsi(gsiCmdObj.getGsi().split(":")[1]);
                     gsiCmdObj.setGsi(gsiCmdObj.getGsi().replace("-", " "));
                 }
-                fullLogs.append("\n").append("<code>-> Download - https://sourceforge.net/projects/gsis137/files/GSI/").append(re).append(ab).append("</code>");
+                fullLogs.append("\n").append("<code>-> Download - https://sourceforge.net/projects/"  + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/GSI/").append(re).append(ab).append("</code>");
                 bot.editMessage(fullLogs.toString(), update, id);
                 /*
                  * Prepare GSI message
@@ -595,7 +595,7 @@ public class DebloatGSIs extends Command {
                     List<InlineKeyboardButton> rowInline2 = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("Aonly Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + aonly);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/"  + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/GSI/" + re + aonly);
                     rowInline2.add(inlineKeyboardButton);
                     rowsInline.add(rowInline2);
                 }
@@ -604,7 +604,7 @@ public class DebloatGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("A/B Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + ab);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/"  + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/GSI/" + re + ab);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -613,7 +613,7 @@ public class DebloatGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("Vendor Overlays Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + vendorOverlays);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/"  + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/GSI/" + re + vendorOverlays);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -622,7 +622,7 @@ public class DebloatGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("ODM Overlays Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/GSI/" + re + odmOverlays);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/"  + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/GSI/" + re + odmOverlays);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -653,7 +653,7 @@ public class DebloatGSIs extends Command {
                         + noticeGSI
                         + developerNoticeGSI
                         + "<b>✵ RK137 GSI ✵</b>" + "\n"
-                        + "<a href=\"https://t.me/rk137gsi\">GSI Channel</a> |  <a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/GSI\">SF Folder</a>"
+                        + "<a href=\"https://t.me/rk137gsi\">Channel</a> |  <a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/GSI\">SF Folder</a>"
                         + "\n\n<b>Credits :</b>" + "\n"
                         + "<a href=\"https://github.com/Erfanoabdi\">Erfan</a>" + " | "
                         + "<a href=\"https://github.com/xiaoxindada\">Xiaoxindada</a>" + " | " 
@@ -669,7 +669,7 @@ public class DebloatGSIs extends Command {
                 /*
                  * Reply kthx
                  */
-                if (idGSI != 0) bot.sendReply("Done! Here the <a href=\"" + "https://t.me/" + Config.getDefConfig("publicChannel")  + "/" + idGSI + "\">link</a> post", update);
+                if (idGSI != 0) bot.sendReply("Done! Here is the <a href=\"" + "https://t.me/" + Config.getDefConfig("publicChannel")  + "/" + idGSI + "\">link</a> post", update);
 
                 /*
                  * Delete output/input folder with two codes (The first seems not worked so to make sure, use other code for it)

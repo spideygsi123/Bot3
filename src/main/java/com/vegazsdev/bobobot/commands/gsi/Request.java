@@ -81,34 +81,21 @@ public class Request extends Command {
                                 addInfo = String.valueOf(str);
                             }
                             if (addInfo.equals("")) addInfo = prefs.getString("info_not_shared");
-
-                            /*
-                             * Prepare InlineKeyboardButton
-                             */
-                            InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
-                            List<List<InlineKeyboardButton>> inlineKeyboardButton = new ArrayList<>();
-
-                            List<InlineKeyboardButton> inlineKeyboardButtonArrayList = new ArrayList<>();
-                            InlineKeyboardButton inlineKeyboardButtonAonly = new InlineKeyboardButton();
-                            inlineKeyboardButtonAonly.setText("\uD83D\uDCE6 Firmware/ROM Link");
-                            inlineKeyboardButtonAonly.setUrl(msgComparableRaw[1]);
-                            inlineKeyboardButtonArrayList.add(inlineKeyboardButtonAonly);
-                            inlineKeyboardButton.add(inlineKeyboardButtonArrayList);
-
-                            /*
-                             * Finish InlineKeyboardButton setup
-                             */
-                            markupInline.setKeyboard(inlineKeyboardButton);
-                            message.setReplyMarkup(markupInline);
-
-                            // Initial to the message base
-                            message.setChatId(Objects.requireNonNull(Config.getDefConfig("privateChat")));
+                            StringBuilder url = new StringBuilder();
+                            String addUrl = "";
+                            url.append(msgComparableRaw[1]).append(" ");
+                            addUrl = String.valueOf(url);                  
+                      /*
+                     * Initialize the message
+                     */                       message.setChatId(Objects.requireNonNull(Config.getDefConfig("privateChat")));
                             message.setText(
                                     prefs.getString("gsi_order") + "\n\n"
+                                            + prefs.getString("gsi_url") + "\n"
+                                            + "<code>" + addUrl + "</code>" + "\n\n"
                                             + prefs.getString("addinfo") + "\n"
                                             + "<code>" + addInfo + "</code>"
                                             + "\n\n"
-                                            + prefs.getString("user_info") + "\n\n"
+                                            + prefs.getString("user_info") + "\n"
                                             + prefs.getString("first_and_last_name")
                                             .replace("%1", update.getMessage().getFrom().getFirstName() + validateLastName(update.getMessage().getFrom().getLastName())) + "\n"
                                             + prefs.getString("user_name")

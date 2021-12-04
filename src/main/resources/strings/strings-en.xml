@@ -25,8 +25,8 @@
 
     <!-- About Command -->
     <about_bot>❔&lt;b&gt; About&lt;/b&gt;&#xA;&lt;b&gt;Bo³+t&lt;/b&gt; is written in java and originally developed by @VegaZS&#xA;&#xA;⌨&lt;b&gt; Developer/Maintainer of Bo³+t&lt;/b&gt;&#xA;&lt;a href="https://github.com/VegaBobo"&gt;VegaZS&lt;/a&gt; - Original dev&#xA;&lt;a href="https://github.com/Velosh"&gt;Velosh&lt;/a&gt; - Unofficial maintainer of &lt;b&gt;Bo³+t&lt;/b&gt; for Treble Experience&#xA;&#xA;❕&lt;b&gt; Build Info&lt;/b&gt;&#xA;&lt;code&gt;%1&lt;/code&gt;</about_bot>
-    <about_source_code>❕ Source code</about_source_code>
-    <about_rk137_channel>🌐 RK137GSI Channel</about_rk137_channel>
+    <about_source_code> Source code</about_source_code>
+    <about_rk137_channel>RK137GSI Channel</about_rk137_channel>
 
     <!-- Hello Command -->
 
@@ -34,8 +34,8 @@
 
     <!-- Start command -->
     <start>Hey there! How are you? 👋&#xA;I was developed especially to serve as an automation for ErfanGSIs, I don't have many functions beyond that.</start>
-    <start_source_code>🔧 Source Code</start_source_code>
-    <start_rk137gsi>📫 RK137GSI Channel</start_rk137gsi>
+    <start_source_code>Source Code</start_source_code>
+    <start_rk137gsi>RK137GSI Channel</start_rk137gsi>
 
     <!-- ChangeLang Command -->
 
@@ -92,6 +92,7 @@
     <first_and_last_name>&lt;b&gt;• Name:&lt;/b&gt; &lt;code&gt;%1&lt;/code&gt;</first_and_last_name>
     <user_name>&lt;b&gt;• Username:&lt;/b&gt; &lt;code&gt;%1&lt;/code&gt;</user_name>
     <user_id>&lt;b&gt;• User ID:&lt;/b&gt; &lt;code&gt;%1&lt;/code&gt;</user_id>
+    <gsi_url>▪️ &lt;b&gt;Firmware URL:&lt;/b&gt;</gsi_url>
     <dont_have>Don't have</dont_have>
     <info_not_shared>Information not shared by the user.</info_not_shared>
     <invalid_link>Hello &lt;a href="tg://user?id=%2"&gt;%1&lt;/a&gt; (&lt;code&gt;%3&lt;/code&gt;), the link you sent appears to be invalid! Use with http parameters and try again.</invalid_link>

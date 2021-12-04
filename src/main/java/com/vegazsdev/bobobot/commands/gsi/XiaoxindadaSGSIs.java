@@ -619,7 +619,7 @@ public class XiaoxindadaSGSIs extends Command {
                     List<InlineKeyboardButton> rowInline2 = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("Aonly Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/SGSI/" + re + aonly);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/"  + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/SGSI/" + re + aonly);
                     rowInline2.add(inlineKeyboardButton);
                     rowsInline.add(rowInline2);
                 }
@@ -628,7 +628,7 @@ public class XiaoxindadaSGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("A/B Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/SGSI/" + re + ab);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/"  + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/SGSI/" + re + ab);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -637,7 +637,7 @@ public class XiaoxindadaSGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("Vendor Overlays Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/SGSI/" + re + vendorOverlays);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/"  + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/SGSI/" + re + vendorOverlays);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -646,7 +646,7 @@ public class XiaoxindadaSGSIs extends Command {
                     List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
                     inlineKeyboardButton.setText("ODM Overlays Download");
-                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/gsis137/files/SGSI/" + re + odmOverlays);
+                    inlineKeyboardButton.setUrl("https://sourceforge.net/projects/"  + SourceForgeSetup.getSfConf("bot-sf-proj") + "/files/SGSI/" + re + odmOverlays);
                     rowInline.add(inlineKeyboardButton);
                     rowsInline.add(rowInline);
                 }
@@ -677,7 +677,7 @@ public class XiaoxindadaSGSIs extends Command {
                         + noticeSGSI
                         + developerNoticeSGSI
                         + "<b>✵ RK137 GSI ✵</b>" + "\n"
-                        + "<a href=\"https://t.me/rk137gsi\">GSI Channel</a> | <a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/SGSI\">SF Folder</a>"
+                        + "<a href=\"https://t.me/rk137gsi\">Channel</a> | <a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/SGSI\">SF Folder</a>"
                         + "\n\n<b>Credits :</b>" + "\n"
                         + "<a href=\"https://github.com/Erfanoabdi\">Erfan</a>" + " | "
                         + "<a href=\"https://github.com/xiaoxindada\">Xiaoxindada</a>" + " | " 
