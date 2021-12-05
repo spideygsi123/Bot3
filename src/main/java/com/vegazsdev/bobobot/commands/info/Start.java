@@ -51,8 +51,8 @@ public class Start extends Command {
          */
         List<InlineKeyboardButton> ListInlineKeyboardButtonChannel = new ArrayList<>();
         InlineKeyboardButton ListInlineKeyboardButtonChannelBTN = new InlineKeyboardButton();
-        ListInlineKeyboardButtonChannelBTN.setText(prefs.getString("start_rk137gsi"));
-        ListInlineKeyboardButtonChannelBTN.setUrl("https://t.me/rk137gsi");
+        ListInlineKeyboardButtonChannelBTN.setText(prefs.getString("start_dipeshgsi"));
+        ListInlineKeyboardButtonChannelBTN.setUrl("https://t.me/dipesh_tech");
         ListInlineKeyboardButtonChannel.add(ListInlineKeyboardButtonChannelBTN);
         rowsInline.add(ListInlineKeyboardButtonChannel);
 
