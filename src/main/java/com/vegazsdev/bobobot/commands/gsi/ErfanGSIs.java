@@ -677,8 +677,8 @@ public class ErfanGSIs extends Command {
                         + "</code>\n\n"
                         + noticeGSI
                         + developerNoticeGSI
-                        + "<b>✵ RK137 GSI ✵</b>" + "\n"
-                        + "<a href=\"https://t.me/rk137gsi\">Channel</a> |  <a href=\"https://github.com/rk137gsi\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/gsis137/files/GSI\">SF Folder</a>"
+                        + "<b>✵ DIPESH GSI ✵</b>" + "\n"
+                        + "<a href=\"https://t.me/dt_tech\">Channel</a> |  <a href=\"https://github.com/dp014875\">GitHub</a> |  <a href=\"https://sourceforge.net/projects/dp014875/files/GSI\">SF Folder</a>"
                         + "\n\n<b>Credits :</b>" + "\n"
                         + "<a href=\"https://github.com/Erfanoabdi\">Erfan</a>" + " | "
                         + "<a href=\"https://github.com/xiaoxindada\">Xiaoxindada</a>" + " | " 
